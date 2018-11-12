@@ -1,37 +1,34 @@
+var img, x=200, y=200;
+var t = {};
 function setup() {
-	createCanvas(400, 400);
+  createCanvas(800, 800);
+  img = loadImage(a);
 }
 
-var x = 25,	move = 0;
-
-function keyPressed() {
-	if (keyCode === 65 || keyCode === 37) {
-		move = -1;
-	} else if (keyCode === 68 || keyCode === 39) {
-		move = 1;
-	}
-}
-
-function keyReleased() {
-	if (keyCode === 65 || keyCode === 37 || keyCode === 68 || keyCode === 39) {
-		move = 0;
-	}
+// Movimentação
+function move(){
+ if(keyIsDown(68) || keyIsDown(39)){
+   x += 0.5;
+ }
+ if(keyIsDown(65) || keyIsDown(37)){
+   x -= 0.5;
+ }
+ if(keyIsDown(87) || keyIsDown(38)){
+   y -= 0.5;
+ }
+  if(keyIsDown(83) || keyIsDown(40)){
+    y += 0.5;
+  }
 }
 
 function draw() {
-	background(220);
-	if (move != 0) {
-		if (move === -1) {
-			x -= 0.5;
-		} else if (move===1) {
-			x+= 0.5;
-		}
-	}
-	ellipseMode(CORNER);
-	fill(2);
-	ellipse(x, 25, 50, 50);
-	ellipseMode(CENTER);
-	fill(255, 0, 0);
-	ellipse(x + 23, 20, 25, 25);
-	quad(300, 20, 340, 20, 340, 60, 300, 60);
+   background('#37a2e7');
+  // Movimentação
+  	move();
+  // Personagem
+   translate(x, y);
+   vmk = atan2(mouseY - y, mouseX - x );
+   rotate(vmk);
+   imageMode(CENTER);
+   image(img, 0, 0, 200, 200);
 }
