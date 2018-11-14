@@ -14,13 +14,31 @@ function setup() {
 // Movimentação
 function move() {
   if (keyIsDown(68) || keyIsDown(39)) { // D
-    rot += 0.03;
+    if (rot >= 360) rot = 0;
+    rot += 1;
   }
   if (keyIsDown(65) || keyIsDown(37)) { // A
-    rot -= 0.03;
+    if (rot <= 0) rot = 360;
+    rot -= 1;
   }
   if (keyIsDown(87) || keyIsDown(38)) { // W
-    y -= spd;
+    if (rot >= 0 && rot <= 90) { // único funcional até agora
+      // rot = 90 => x=0; y+=1
+      // rot = 0 => x+=1; y=0
+      y += (spd/90) * rot;
+      x += spd - (rot / 90); // rot90.x = 0; rot0.x = 1;
+    } else if (rot >= 270 && rot <= 360) {
+      // rot = 270 => x=0; y-=1;
+      // rot = 360 => x+=1; y=0;
+      newRot = 360-rot;
+      console.log(rot);
+      x += 1 - (rot / 270);
+      y -= 0.0037037037037 * rot;
+    } else if (rot > 90 && rot <= 180) {
+      // rot = 180 => x-=1; y=0;
+      // rot = 90 => x=0; y+=1;
+    } else if (rot > 180 && rot < 270) {}
+
   }
   if (keyIsDown(83) || keyIsDown(40)) { // S
     y += spd;
@@ -33,10 +51,12 @@ function draw() {
   move();
 
   // Personagem
+  quad(x + 100, y, 220, 220, 200, 300, 300, 220);
   translate(x, y);
   vmk = atan2(mouseY - y, mouseX - x);
+  angleMode(DEGREES);
   rotate(rot);
   imageMode(CENTER);
   image(img, 0, 0, 200, 200);
-    quad(200, 0, 220, 220, 200, 300, 300, 220);
+  push();
 }
