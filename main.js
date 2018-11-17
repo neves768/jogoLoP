@@ -14,11 +14,11 @@ function setup() {
 function move() {
   if (keyIsDown(68) || keyIsDown(39)) { // D
     if (rot >= 360) rot = 0;
-    rot += 0.5;
+    rot += 0.3;
   }
   if (keyIsDown(65) || keyIsDown(37)) { // A
     if (rot <= 0) rot = 360;
-    rot -= 0.5;
+    rot -= 0.3;
   }
   if (keyIsDown(87) || keyIsDown(38)) { // W
     if (spd < 1) spd += 0.01;
@@ -49,7 +49,7 @@ function draw() {
   rotate(radians(rot));
   imageMode(CENTER);
   image(img, 0, 0, 100, 100);
-
+  
   // Movimentação
   move();
   y += sin(radians(rot)) * spd;
