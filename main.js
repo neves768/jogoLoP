@@ -5,12 +5,28 @@ var img, img2, x = 200,
   spd = 0,
   movingTimao = false;
 var t = {};
-
+/// No futuro, separaremos os arquivos para cada conjunto de funcionalidades.
 function setup() {
   createCanvas(800, 800);
   img = loadImage(a);
   IAone = loadImage(a);
   img2 = loadImage(timao);
+}
+// >> Mecanicas
+tiros = [];
+
+function atirar() {
+  tiros[tiros.length] = {
+    x: x,
+    y: y,
+    rot: rot+90
+  };
+}
+
+function keyPressed() {
+  if (keyCode == 32) {
+    atirar();
+  }
 }
 
 // Movimentação
@@ -32,12 +48,10 @@ function move() {
     movingTimao = false
   }
   if (keyIsDown(87) || keyIsDown(38)) { // W
-    if (spd < 1) {
-      if (spd >= 0 && spd <= 0.1) spd += 1 / frameCount;
-    }
+    if (spd < 1) spd += 0.03;
   }
   if (keyIsDown(83) || keyIsDown(40)) { // S
-    if (spd > -1) spd -= 1 / 30;
+    if (spd > -1) spd -= 0.03;
   }
 }
 
@@ -71,7 +85,6 @@ function navio() {
   rotate(radians(rot));
   imageMode(CENTER);
   image(img, 0, 0, 100, 100);
-  //quad(0, 50, 0, 50, 20, 1, 3, 1);
   pop();
 
   // Movimentação do Navio
@@ -79,17 +92,18 @@ function navio() {
   if (rot >= 360) rot = 0;
   if (rot < 0) rot = 360;
   move();
-  y += sin(radians(rot)) * spd;
   x += cos(radians(rot)) * spd;
+  y += sin(radians(rot)) * spd;
 }
 
-var shipIA_x = 0, shipIA_y=500;
+var shipIA_x = 0,
+  shipIA_y = 500;
+
 function runShipIA() {
   push();
-  if(shipIA_x > 850) shipIA_x = 0;
+  if (shipIA_x > 850) shipIA_x = 0;
   shipIA_x += 1;
   translate(shipIA_x, shipIA_y);
-  //rotate(radians(rot));
   imageMode(CENTER);
   image(IAone, 0, 0, 100, 100);
   pop();
@@ -103,10 +117,19 @@ function draw() {
   // Elementos do mapa
   drawMap();
 
+  // Mecanica dos Tiros [Necessita otimização e melhorias]
+  push();
+  for (i = 0; i < tiros.length; i++) {
+    tiros[i].x += cos(radians(tiros[i].rot)) * 1;
+    tiros[i].y += sin(radians(tiros[i].rot)) * 1;
+    //translate(tiros[i].x, tiros[i].y);
+    quad(tiros[i].x, tiros[i].y, tiros[i].x, tiros[i].y + 5, tiros[i].x + 5, tiros[i].y + 5, tiros[i].x + 5, tiros[i].y);
+  }
+  pop();
+
   // Navio do Jogador
   navio();
-  
+
   // Run IA
   runShipIA();
-
 }
