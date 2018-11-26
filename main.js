@@ -5,6 +5,7 @@ var img, img2, x = 200,
   spd = 0,
   movingTimao = false;
 var t = {};
+var px=0,py=0;
 /// No futuro, separaremos os arquivos para cada conjunto de funcionalidades.
 function setup() {
   createCanvas(800, 800);
@@ -19,7 +20,7 @@ function atirar() {
   tiros[tiros.length] = {
     x: x,
     y: y,
-    rot: rot+90
+    rot: rot + 90
   };
 }
 
@@ -57,11 +58,12 @@ function move() {
 
 // Interface
 function dInterface() {
+  push();
   textSize(20);
   text('Velocidade: ' + Math.floor(spd * 10) + ' ', 10, 30);
   text('Rotação: ' + Math.floor(rot) + ' ', 150, 30);
 
-  push();
+
   translate(400, 800);
   rotate(radians(rotInfluenciatus));
   imageMode(CENTER);
@@ -92,8 +94,12 @@ function navio() {
   if (rot >= 360) rot = 0;
   if (rot < 0) rot = 360;
   move();
-  x += cos(radians(rot)) * spd;
+  addition = cos(radians(rot)) * spd;
+  x += addition;
+  px += addition;
+  addition = sin(radians(rot)) * spd;
   y += sin(radians(rot)) * spd;
+  py += addition;
 }
 
 var shipIA_x = 0,
@@ -111,12 +117,13 @@ function runShipIA() {
 
 function draw() {
   background('#37a2e7');
-  // Interface
-  dInterface();
-
+  
   // Elementos do mapa
+  push();
+  translate(-px,-py);
   drawMap();
-
+  pop();
+  
   // Mecanica dos Tiros [Necessita otimização e melhorias]
   push();
   for (i = 0; i < tiros.length; i++) {
@@ -129,7 +136,10 @@ function draw() {
 
   // Navio do Jogador
   navio();
-
+  
   // Run IA
   runShipIA();
+  
+  // Interface
+  dInterface();
 }
