@@ -4,6 +4,7 @@ var img, img2, IAone, a, x = 200,
   rotInfluenciatus = 0,
   spd = 0,
   maxSpd = 1,
+  health = 100,
   movingTimao = false,
   // Câmera
   px = 0,
@@ -14,6 +15,9 @@ function setup() {
   img = loadImage(a);
   IAone = loadImage(a);
   img2 = loadImage(timao);
+  _logo = loadImage(logo);
+  _balac = loadImage(bala);
+  _ilha = loadImage(optmenu);
 }
 
 function getRandomIntInclusive(min, max) { // Função de: https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Math/random
@@ -32,7 +36,7 @@ function getRandomIntInclusive(min, max) { // Função de: https://developer.moz
 
 tiros = [];
 
-function atirar() {
+function atirar(x, y, rot) {
   tiros[tiros.length] = {
     x: x,
     y: y,
@@ -42,7 +46,7 @@ function atirar() {
 
 function keyPressed() {
   if (keyCode == 32) {
-    atirar();
+    atirar(x, y, rot);
     spawnAIShip(0);
   }
 }
@@ -69,10 +73,10 @@ function move() {
     movingTimao = false
   }
   if (keyIsDown(87) || keyIsDown(38)) { // W
-    if (spd < maxSpd) spd += 0.03;
+    if (spd < maxSpd) spd += 0.02;
   }
   if (keyIsDown(83) || keyIsDown(40)) { // S
-    if (spd > -maxSpd) spd -= 0.03;
+    if (spd > -maxSpd) spd -= 0.02;
   }
 }
 
@@ -81,7 +85,9 @@ function move() {
 ################################*/
 
 function drawMap() {
+  
   quad(555, 300, 500, 400, 500, 100, 400, 100);
+  image(_ilha, 555, 300, 128, 128);
 }
 
 /*################################
@@ -94,7 +100,7 @@ navios = [{
   nome: "Navio Inglês",
   spd: {
     aceleracao: 0.3,
-    maxi: 1
+    maxi: 0.6
   },
   shipimg: IAone
 }];
@@ -108,6 +114,7 @@ function spawnAIShip(id) {
     vida: 50,
     x: 60,
     y: 200,
+    rotation: 0,
     shipimg: navios[id].shipimg
   };
 }
@@ -117,9 +124,22 @@ spawnAIShip(0);
 ~~~~~~> Visual
 */
 
+function drawShipName(name){
+  //sh();
+  rotate(radians(90));
+  fill(color(255, 255, 255));
+  textSize(10);
+  text(name, -(name.length*2), 60);
+  //p();
+}
+
 function healthBar(vida) {
-  quad(-10, -40, -10, -30, 40, -30, 40, -40);
-  quad(-10, -40, -10, -30, 10 + (vida * 0.3), -30, 10 + (vida * 0.3), -40);
+  strokeWeight(1);
+  fill(color(255, 0, 0));
+  quad(-30, -30, -30, -20, 20, -20, 20, -30);
+  strokeWeight(0);
+  fill(color(0, 204, 0));
+  quad(-30, -30, -30, -20, -10 + (vida * 0.3), -20, -10 + (vida * 0.3), -30);
 }
 
 /*
@@ -131,16 +151,23 @@ function drawShips() {
     push();
     //console.log(i);
     translate(naviosAt[i].x + 100, naviosAt[i].y);
+    rotate(naviosAt[i].rotation);
     imageMode(CENTER);
-    //green();
     healthBar(naviosAt[i].vida);
     image(IAone, 0, 0, 100, 100);
+    if (naviosAt[i].vida <= 0) {
+      naviosAt.splice(i, 1);
+    }
+    drawShipName(navios[naviosAt[i].ID].nome);
     pop();
   }
 }
 
 function runShipIA() {
   //drawShips();
+  for(i = 0; i < naviosAt.length; i++){
+    atirar(naviosAt[i].x, naviosAt[i].y, naviosAt[i].rotation);
+  }
 }
 
 /*
@@ -153,11 +180,13 @@ function navio() {
   //vmk = atan2(mouseY - y, mouseX - x);
   rotate(radians(rot));
   imageMode(CENTER);
+  healthBar(health);
   image(img, 0, 0, 100, 100);
+  drawShipName("Navio Pirata");
   pop();
 
   // Movimentação do Navio
-  rot += rotInfluenciatus / 900;
+  rot += rotInfluenciatus / 800;
   if (rot >= 360) rot = 0;
   if (rot < 0) rot = 360;
   move();
@@ -192,23 +221,73 @@ function dInterface() {
   else if (rotInfluenciatus < 0 && !movingTimao) rotInfluenciatus += 0.5;
 }
 
-function draw() {
-  background('#37a2e7');
+/*
+	MENU PRINCIPAL
+*/
+var isActive = true,
+  botao1_cor = "rgb(131,73,23)",
+  botao1_cor_baixo = "rgb(177,126,81)";
 
+function mousePressed() {
+  if(!isActive) return;
+  if (mouseX >= 320 && mouseX <= 440 && mouseY >= 270 && mouseY <= 300) {
+    isActive = false;
+  }
+}
+
+function hoverButton() {
+  if (mouseX >= 320 && mouseX <= 440 && mouseY >= 270 && mouseY <= 300) {
+    botao1_cor = "rgb(177,126,81)";
+    botao1_cor_baixo = "rgb(131,73,23)";
+  } else {
+    botao1_cor = "rgb(131,73,23)";
+    botao1_cor_baixo = "rgb(177,126,81)";
+  }
+}
+
+function drawMenu() {
+  background('#000000');
+  push();
+  image(_logo, 280, 50, 200, 200);
+  text("Pirate Wars", 350, 225);
+  pop();
+  // Botão 1
+  push();
+  strokeWeight(0);
+  fill(botao1_cor);
+  quad(320, 270, 320, 300, 440, 300, 440, 270);
+  fill(botao1_cor_baixo);
+  quad(330, 295, 320, 300, 440, 300, 430, 295);
+  fill(color(255, 255, 255));
+  textSize(15);
+  strokeWeight(0.5);
+  fill(color(255, 255, 255));
+  text("Jogarrr!", 350, 290);
+  pop();
+  strokeWeight(5);
+  stroke(color(255, 255, 255));
+  line(mouseX, mouseY, pmouseX, pmouseY);
+  text("Pirate Wars foi desenvolvido por Christopher Neves e Alexandre", 200, 750);
+
+  hoverButton();
+}
+
+function draw() {
+  if (isActive) {
+    drawMenu();
+    return;
+  }
+  background('#37a2e7');
   // Elementos do mapa
   push();
   translate(-px, -py);
   drawMap();
   drawShips();
-  pop();
-
   // Mecanica dos Tiros [Necessita otimização e melhorias]
-  push();
   for (i = 0; i < tiros.length; i++) {
     tiros[i].x += cos(radians(tiros[i].rot)) * 1;
     tiros[i].y += sin(radians(tiros[i].rot)) * 1;
-    //translate(tiros[i].x, tiros[i].y);
-    quad(tiros[i].x, tiros[i].y, tiros[i].x, tiros[i].y + 5, tiros[i].x + 5, tiros[i].y + 5, tiros[i].x + 5, tiros[i].y);
+    image(_balac, tiros[i].x, tiros[i].y, 10, 10);
   }
   pop();
 
@@ -216,7 +295,7 @@ function draw() {
   navio();
 
   // Run IA
-  runShipIA();
+  if(frameCount % 200 == 0) runShipIA();
 
   // Interface
   dInterface();
