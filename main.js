@@ -267,7 +267,7 @@ function drawMenu() {
   strokeWeight(5);
   stroke(color(255, 255, 255));
   line(mouseX, mouseY, pmouseX, pmouseY);
-  text("Pirate Wars foi desenvolvido por Christopher Neves e Alexandre", 200, 750);
+  text("Pirate Wars foi desenvolvido por Christopher Neves e Alexandre Rebouças", 200, 750);
 
   hoverButton();
 }
