@@ -12,3 +12,7 @@ A: Rotacionar o timão para a esquerda
 D: Rotacionar o timão para a direita
 
 Espaço: Atirar
+
+Arte completamente no estilo 8Bits, um estilo clássico no início da era dos games.
+navios inspirados em fragatas de combate do século XV.
+
