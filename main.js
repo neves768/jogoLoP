@@ -87,7 +87,7 @@ function move() {
 function drawMap() {
   
   quad(555, 300, 500, 400, 500, 100, 400, 100);
-  image(_ilha, 555, 300, 128, 128);
+
 }
 
 /*################################
@@ -267,9 +267,25 @@ function drawMenu() {
   strokeWeight(5);
   stroke(color(255, 255, 255));
   line(mouseX, mouseY, pmouseX, pmouseY);
-  text("Pirate Wars foi desenvolvido por Christopher Neves e Alexandre Rebouças", 200, 750);
+  text("Pirate Wars foi desenvolvido por Christopher Neves e Alexandre", 200, 750);
 
   hoverButton();
+}
+
+counter = 0;
+function daynightCycle(){
+  if(frameCount % 20000){
+    counter++;
+  }
+  if(counter == 0){
+    background('#37a2e7');
+  } else if(counter == 1){
+  	//background('#d0d045');
+  } else if(counter == 2){
+    //background('#f9f927');
+  } else {
+    counter = 0;
+  }
 }
 
 function draw() {
@@ -278,6 +294,7 @@ function draw() {
     return;
   }
   background('#37a2e7');
+  //daynightCycle();
   // Elementos do mapa
   push();
   translate(-px, -py);
